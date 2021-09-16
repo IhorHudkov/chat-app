@@ -28,12 +28,18 @@ $messageForm.addEventListener("submit", (e) => {
 
 socket.on("message", (message) => {
   console.log(message);
-  const html = Mustache.render(messageTemplate, { message });
+  const html = Mustache.render(messageTemplate, {
+    message: message.text,
+    createdAt: moment(message.createdAt).format("h:mm a"),
+  });
   $messages.insertAdjacentHTML("beforeend", html);
 });
 
-socket.on("locationMessage", (url) => {
-  const html = Mustache.render(locationUrlTemplate, { url });
+socket.on("locationMessage", (locationMessage) => {
+  const html = Mustache.render(locationUrlTemplate, {
+    url: locationMessage.url,
+    createdAt: moment(locationMessage.createdAt).format("h:mm a"),
+  });
   $messages.insertAdjacentHTML("beforeend", html);
 });
 
