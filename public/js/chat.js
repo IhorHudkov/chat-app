@@ -6,6 +6,20 @@ const $messageFormButton = $messageForm.querySelector("button");
 const $sendLocationButton = document.querySelector("#send-location");
 const $messages = document.querySelector("#messages");
 
+const autoscroll = () => {
+  const $newMessage = $messages.lastElementChild;
+  const newMessageStyles = getComputedStyle($newMessage);
+  const newMessageMargin = parseInt(newMessageStyles.marginBottom);
+  const newMessageHeight = $newMessage.offsetHeight + newMessageMargin;
+  const visibleHeight = $messages.offsetHeight;
+  const containerHeight = $messages.scrollHeight;
+  const scrollOffset = $messages.scrollTop + visibleHeight;
+
+  if (containerHeight - newMessageHeight <= scrollOffset) {
+    $messages.scrollTop = $messages.scrollHeight;
+  }
+};
+
 const messageTemplate = document.querySelector("#message-template").innerHTML;
 const locationUrlTemplate = document.querySelector(
   "#location-url-template"
@@ -38,6 +52,7 @@ socket.on("message", (message) => {
     createdAt: moment(message.createdAt).format("h:mm a"),
   });
   $messages.insertAdjacentHTML("beforeend", html);
+  autoscroll();
 });
 
 socket.on("locationMessage", (locationMessage) => {
@@ -47,6 +62,7 @@ socket.on("locationMessage", (locationMessage) => {
     createdAt: moment(locationMessage.createdAt).format("h:mm a"),
   });
   $messages.insertAdjacentHTML("beforeend", html);
+  autoscroll();
 });
 
 socket.on("roomData", ({ room, users }) => {
